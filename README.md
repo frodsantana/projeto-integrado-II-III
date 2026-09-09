@@ -2,7 +2,7 @@
 Mapa Interativo de Salas do Campus (Sistema de Organização Acadêmica)
 
 ### 🎯 OBJETIVO
-Auxiliar alunos e professores na visualização e organização do uso de salas de aula e laboratórios de uma faculdade em tempo real. O sistema permite verificar a disponibilidade de cada espaço e qual disciplina/evento está ocorrendo no local.
+Auxiliar alunos e professores na visualização e organização do uso de salas de aula e laboratórios em tempo real. O sistema permite verificar a disponibilidade de cada espaço e qual disciplina/evento está ocorrendo no local.
 
 ---
 
