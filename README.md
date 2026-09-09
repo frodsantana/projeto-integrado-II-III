@@ -1,2 +1,2 @@
-# projeto-integrado-II-III
+# Projeto Integrado II - III
 Repositório para trabalho acadêmico.
