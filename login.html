@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mapa da Faculdade</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <h2>Acesso ao Sistema</h2>
+        <p>Selecione seu perfil para acessar o mapa do campus</p>
+
+        <div class="role-selector">
+            <button type="button" class="role-btn active" id="btnAluno" onclick="selectRole('aluno')">Aluno</button>
+            <button type="button" class="role-btn" id="btnAdmin" onclick="selectRole('admin')">Administrador</button>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="input-group" id="passwordGroup" style="display: none;">
+                <label for="password">Senha de Administrador:</label>
+                <input type="password" id="password" placeholder="Digite a senha (padrão: admin)">
+            </div>
+
+            <button type="submit" class="submit-btn">Entrar no Sistema</button>
+        </form>
+
+        <div id="loginError" class="error-msg"></div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

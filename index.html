@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa da Faculdade - Controle de Acesso</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="is-aluno">
+
+    <!-- Barra de Controle de Usuario -->
+    <div class="auth-bar">
+        <div class="user-info">
+            Perfil Atual:
+            <span id="roleBadge" class="badge badge-aluno">Aluno (Apenas Leitura)</span>
+        </div>
+        <button class="role-switch-btn" onclick="logout()">Sair / Trocar Conta</button>
+    </div>
+
+    <h1>Organização do Campus</h1>
+
+    <div class="nav-buttons">
+        <a href="#andar3" class="nav-btn">3º Andar</a>
+        <a href="#andar2" class="nav-btn">2º Andar</a>
+        <a href="#andar1" class="nav-btn">1º Andar</a>
+        <a href="#labs" class="nav-btn">Laboratórios</a>
+    </div>
+
+    <div class="container">
+        <!-- 3º ANDAR -->
+        <div class="section" id="andar3">
+            <h2>3º Andar (Salas 301 a 312)</h2>
+            <div class="grid">
+                <div class="room" data-id="301" onclick="toggleRoom(this)"><div class="room-title">Sala 301</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="302" onclick="toggleRoom(this)"><div class="room-title">Sala 302</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="303" onclick="toggleRoom(this)"><div class="room-title">Sala 303</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="304" onclick="toggleRoom(this)"><div class="room-title">Sala 304</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="305" onclick="toggleRoom(this)"><div class="room-title">Sala 305</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="306" onclick="toggleRoom(this)"><div class="room-title">Sala 306</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="307" onclick="toggleRoom(this)"><div class="room-title">Sala 307</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="308" onclick="toggleRoom(this)"><div class="room-title">Sala 308</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="309" onclick="toggleRoom(this)"><div class="room-title">Sala 309</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="310" onclick="toggleRoom(this)"><div class="room-title">Sala 310</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="311" onclick="toggleRoom(this)"><div class="room-title">Sala 311</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="312" onclick="toggleRoom(this)"><div class="room-title">Sala 312</div><div class="room-obs">Livre</div></div>
+            </div>
+        </div>
+
+        <!-- 2º ANDAR -->
+        <div class="section" id="andar2">
+            <h2>2º Andar (Salas 201 a 212)</h2>
+            <div class="grid">
+                <div class="room" data-id="201" onclick="toggleRoom(this)"><div class="room-title">Sala 201</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="202" onclick="toggleRoom(this)"><div class="room-title">Sala 202</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="203" onclick="toggleRoom(this)"><div class="room-title">Sala 203</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="204" onclick="toggleRoom(this)"><div class="room-title">Sala 204</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="205" onclick="toggleRoom(this)"><div class="room-title">Sala 205</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="206" onclick="toggleRoom(this)"><div class="room-title">Sala 206</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="207" onclick="toggleRoom(this)"><div class="room-title">Sala 207</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="208" onclick="toggleRoom(this)"><div class="room-title">Sala 208</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="209" onclick="toggleRoom(this)"><div class="room-title">Sala 209</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="210" onclick="toggleRoom(this)"><div class="room-title">Sala 210</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="211" onclick="toggleRoom(this)"><div class="room-title">Sala 211</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="212" onclick="toggleRoom(this)"><div class="room-title">Sala 212</div><div class="room-obs">Livre</div></div>
+            </div>
+        </div>
+
+        <!-- 1º ANDAR -->
+        <div class="section" id="andar1">
+            <h2>1º Andar (Salas 101 a 112)</h2>
+            <div class="grid">
+                <div class="room" data-id="101" onclick="toggleRoom(this)"><div class="room-title">Sala 101</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="102" onclick="toggleRoom(this)"><div class="room-title">Sala 102</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="103" onclick="toggleRoom(this)"><div class="room-title">Sala 103</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="104" onclick="toggleRoom(this)"><div class="room-title">Sala 104</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="105" onclick="toggleRoom(this)"><div class="room-title">Sala 105</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="106" onclick="toggleRoom(this)"><div class="room-title">Sala 106</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="107" onclick="toggleRoom(this)"><div class="room-title">Sala 107</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="108" onclick="toggleRoom(this)"><div class="room-title">Sala 108</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="109" onclick="toggleRoom(this)"><div class="room-title">Sala 109</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="110" onclick="toggleRoom(this)"><div class="room-title">Sala 110</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="111" onclick="toggleRoom(this)"><div class="room-title">Sala 111</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="112" onclick="toggleRoom(this)"><div class="room-title">Sala 112</div><div class="room-obs">Livre</div></div>
+            </div>
+        </div>
+
+        <!-- LABORATÓRIOS -->
+        <div class="section labs-section" id="labs">
+            <h2>Laboratórios Especializados</h2>
+            <div class="grid">
+                <div class="room" data-id="lab1" onclick="toggleRoom(this)"><div class="room-title">Lab Info 1</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab2" onclick="toggleRoom(this)"><div class="room-title">Lab Info 2</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab3" onclick="toggleRoom(this)"><div class="room-title">Lab Info 3</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab4" onclick="toggleRoom(this)"><div class="room-title">Lab Química</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab5" onclick="toggleRoom(this)"><div class="room-title">Lab Física</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab6" onclick="toggleRoom(this)"><div class="room-title">Lab Biologia</div><div class="room-obs">Livre</div></div>
+                <div class="room" data-id="lab7" onclick="toggleRoom(this)"><div class="room-title">Lab Robótica</div><div class="room-obs">Livre</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">Acesso restrito: Apenas administradores podem alterar o status das salas.</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
