@@ -26,7 +26,7 @@ Abra `../projeto-integrado-prototipo/index.html` com um servidor estático, como
 git worktree remove ../projeto-integrado-prototipo
 ```
 
-As branches não transportam dados do navegador ou do PostgreSQL entre versões. O desenvolvimento contínuo deve partir da `main`.
+As branches não transportam dados do navegador ou do PostgreSQL entre versões.
 
 ## O que o sistema permite fazer
 
