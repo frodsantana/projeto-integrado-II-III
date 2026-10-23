@@ -1,5 +1,11 @@
 let token: string | null = null;
 let sessionVersion = 0;
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const productionApiUrl = 'https://projeto-integrado-ii-iii.onrender.com/api';
+const apiBaseUrl =
+  import.meta.env.PROD && (!configuredApiUrl || configuredApiUrl === '/api')
+    ? productionApiUrl
+    : configuredApiUrl || '/api';
 export const setToken = (value: string | null) => {
   token = value;
   sessionVersion++;
@@ -27,7 +33,7 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
   const timer = setTimeout(abort, options.timeout ?? 15000);
   const version = sessionVersion;
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL || '/api'}${path}`, {
+    const response = await fetch(`${apiBaseUrl}${path}`, {
       method: options.method ?? 'GET',
       signal: controller.signal,
       credentials: 'omit',
@@ -38,7 +44,12 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
       },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
-    const body = response.status === 204 ? undefined : await response.json().catch(() => undefined);
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('/json') || contentType.includes('+json');
+    const body =
+      response.status === 204 || !isJson
+        ? undefined
+        : await response.json().catch(() => undefined);
     if (version !== sessionVersion) throw new DOMException('Sessão alterada', 'AbortError');
     if (response.status === 401 && token && !options.public) {
       setToken(null);
@@ -46,6 +57,13 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
     }
     if (!response.ok)
       throw new ApiError(body?.detail || 'Não foi possível concluir a operação.', response.status);
+    if (response.status !== 204 && !isJson)
+      throw new ApiError(
+        'O servidor retornou uma página HTML em vez dos dados da API. Verifique VITE_API_URL na hospedagem.',
+        response.status,
+      );
+    if (response.status !== 204 && body === undefined)
+      throw new ApiError('A API retornou uma resposta JSON vazia ou inválida.', response.status);
     return body as T;
   } catch (error) {
     if (error instanceof ApiError) throw error;

@@ -50,7 +50,13 @@ export function SchedulePage({ audience }: { audience: Audience }) {
   if (!base.data)
     return (
       <section className="panel">
-        <h1>Cronograma de aulas</h1>
+        <h1>
+          {anonymous
+            ? 'Consulta de aulas'
+            : audience === 'coordinator'
+              ? 'Gerenciador do Cronograma Semestral'
+              : 'Minhas aulas'}
+        </h1>
         <Alert>{base.error}</Alert>
         <p role="status">{base.loading ? 'Carregando cursos…' : ''}</p>
         <Button variant="secondary" onClick={base.reload}>
