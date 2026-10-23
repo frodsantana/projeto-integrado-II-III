@@ -1,63 +1,80 @@
 # Sistema Acadêmico — Universidade Anhanguera
 
-Projeto Integrado II/III para gestão de cursos, professores, salas e cronogramas semestrais.
+Aplicação web para administrar cursos, matérias, professores, salas e cronogramas semestrais. O projeto é o Projeto Integrado II/III da Universidade Anhanguera.
 
-**React + TypeScript** no frontend, **Spring Boot + Spring Data JPA** no backend e **PostgreSQL** com migrações **Flyway**. Cadastros e aulas são persistidos pela API. O modo de demonstração local foi removido.
+A versão principal usa **React, TypeScript, Vite e Tailwind CSS** na interface, **Java 17, Spring Boot e Spring Data JPA** na API e **PostgreSQL** para armazenar os dados. O **Flyway** aplica as alterações de esquema. A interface se comunica com a API; os cadastros e as aulas não dependem do armazenamento local do navegador.
 
 ## Versões do projeto
 
-As duas versões ficam em branches separadas deste repositório:
+O repositório mantém as versões em branches distintas:
 
-| Branch | Versão | Uso |
+| Branch | Conteúdo | Finalidade |
 | --- | --- | --- |
-| `main` | React + TypeScript, Spring Boot/JPA e PostgreSQL | Projeto principal e desenvolvimento contínuo. |
-| [`prototipo`](https://github.com/frodsantana/projeto-integrado-II-III/tree/prototipo) | HTML, JavaScript e Tailwind via CDN, com localStorage | Referência histórica preservada no commit `23b5c84`. |
+| [`main`](https://github.com/frodsantana/projeto-integrado-II-III/tree/main) | React + TypeScript, Spring Boot/JPA e PostgreSQL | Projeto principal e desenvolvimento ativo. |
+| [`prototipo`](https://github.com/frodsantana/projeto-integrado-II-III/tree/prototipo) | HTML, JavaScript, Tailwind via CDN e `localStorage` | Versão histórica para consulta. |
 
-Este README descreve a versão principal. Para consultar o sistema antigo, selecione `prototipo` no GitHub e siga o README daquela branch. O protótipo não receberá novas funcionalidades nem será mesclado à `main`.
-
-Para executar o protótipo sem trocar os arquivos do projeto principal, crie uma cópia de trabalho separada a partir da raiz do repositório:
+Este README explica como executar e usar a `main`. Para abrir o protótipo em uma cópia de trabalho separada, execute na raiz do repositório:
 
 ```powershell
 git fetch origin
 git worktree add --detach ../projeto-integrado-prototipo origin/prototipo
 ```
 
-Abra o `index.html` dessa cópia com um servidor estático. Os dados do navegador e do PostgreSQL não são armazenados nas branches nem transferidos entre versões. Novas funcionalidades devem partir da `main`.
+Abra `../projeto-integrado-prototipo/index.html` com um servidor estático, como a extensão Live Server do VS Code. Para remover essa cópia depois de fechar o servidor:
 
-## Funcionalidades
+```powershell
+git worktree remove ../projeto-integrado-prototipo
+```
 
-| Acesso        | Funcionalidades                                                                                                                                                     |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Administrador | Cadastrar e editar cursos, matérias, coordenadores, professores e salas; consultar vínculos por coordenador e curso; importar backups antigos com prévia.           |
-| Coordenador   | Adicionar aulas, repetir semanalmente, editar uma ocorrência ou a série inteira, publicar e excluir séries. Filtrar por curso, semestre, professor, período e data. |
-| Professor     | Consultar suas aulas publicadas em um ou vários cursos; alterar sala, cancelar e confirmar ocorrências.                                                             |
-| Aluno         | Entrar sem CPF ou senha, consultar aulas publicadas por curso, semestre e período e abrir notificações.                                                             |
+As branches não transportam dados do navegador ou do PostgreSQL entre versões. O desenvolvimento contínuo deve partir da `main`.
 
-A criação de curso gera uma turma inicial por semestre. Coordenadores e professores podem estar vinculados a vários cursos. Conflitos de sala ou professor são verificados pelo servidor, inclusive entre requisições simultâneas.
+## O que o sistema permite fazer
 
-## Executar
+- **Administrador:** cadastrar e editar cursos, matérias, coordenadores, professores e salas; consultar vínculos por curso e coordenador; importar um backup antigo com prévia.
+- **Coordenador:** organizar aulas, repetir semanalmente, editar uma aula ou sua série, publicar o cronograma e filtrar aulas. O sistema sinaliza a disponibilidade de salas para a data e o horário informados.
+- **Professor:** consultar aulas publicadas de seus cursos e alterar a sala ou a situação da aula.
+- **Aluno:** acessar sem CPF e senha, escolher curso, semestre e período, consultar a semana atual ou outro mês e ver notificações da semana.
 
-Requisitos: Java 17, Node.js 22.22 ou superior compatível, npm e PostgreSQL 18. O Maven Wrapper está incluído. Docker Desktop é opcional para executar o banco.
+Ao cadastrar um curso, o sistema cria turmas iniciais para seus semestres. Professores e coordenadores podem ser vinculados a mais de um curso. Conflitos de horário, publicação e alterações são tratados pela API.
 
-### Banco e API
+## Requisitos
 
-Na pasta backend, mantenha seu arquivo .env existente. Para uma instalação nova, copie .env.example para .env e configure as senhas e o endereço do banco. Não sobrescreva o arquivo nem recrie o volume se já possui dados.
+- Java 17.
+- Node.js 22.22 ou superior compatível e npm.
+- PostgreSQL 18 ou Docker Desktop para executar o PostgreSQL pelo Compose.
+- PowerShell para os scripts `run.ps1` descritos abaixo. Os comandos do Maven Wrapper também estão disponíveis diretamente.
+
+## Iniciar pela primeira vez
+
+Os exemplos a seguir usam PowerShell. Abra dois terminais na pasta raiz do projeto.
+
+### 1. Configurar o banco e iniciar a API
+
+Na primeira execução, crie seu arquivo de configuração a partir do exemplo:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+Edite `backend/.env` e substitua `DB_PASSWORD` e `ADMIN_PASSWORD` por valores privados. A senha do administrador deve ter pelo menos 12 caracteres. O CPF inicial é `99999999999`; você pode alterá-lo por `ADMIN_CPF` antes da primeira inicialização.
+
+Na mesma sessão do PowerShell, inicie o PostgreSQL pelo Docker Compose e o backend:
 
 ```powershell
 cd backend
-# Apenas se você utiliza o PostgreSQL do Compose:
 docker compose up -d
-# Carrega o .env e inicia o Spring Boot:
 .\run.ps1
 ```
 
-O Compose existente publica o PostgreSQL na porta **5433**. Para esse banco, configure DB_URL=jdbc:postgresql://localhost:5433/academico. Se utiliza PostgreSQL instalado diretamente, mantenha a porta correspondente à sua instalação.
+O Compose publica o PostgreSQL somente no computador local, na porta **5433**, e mantém os dados no volume `academico_data`. Não remova esse volume se quiser preservar os dados. A API fica disponível em `http://localhost:8080/api`.
 
-A API atende em http://localhost:8080/api. O administrador inicial usa ADMIN_CPF e ADMIN_PASSWORD. A senha inicial só é aplicada se ainda não existir administrador; a migração não redefine contas existentes.
+Na inicialização, o Flyway aplica as migrações pendentes. Uma delas cria as salas padrão: **101–119**, **201–219**, **301–319**, **401–419** e **Lab1–Lab6**. Salas já cadastradas são mantidas. O administrador inicial só é criado quando ainda não existe uma conta de administrador; alterar a senha no `.env` não redefine uma senha existente.
 
-### Interface React
+Se você já possui `backend/.env`, mantenha-o e confira apenas se `DB_URL` aponta para o banco correto. Não copie o exemplo sobre sua configuração atual. Para um PostgreSQL instalado diretamente, ajuste `DB_URL`, `DB_USER` e `DB_PASSWORD` conforme sua instalação; não é necessário iniciar o Compose.
 
-Em outro terminal, a partir da raiz:
+### 2. Iniciar a interface
+
+No segundo terminal, a partir da raiz do repositório:
 
 ```powershell
 cd frontend
@@ -65,47 +82,74 @@ npm ci
 npm run dev
 ```
 
-Abra **http://127.0.0.1:5173**. O Vite encaminha /api para http://127.0.0.1:8080. Para outra porta da API, defina API_PROXY_TARGET no terminal antes de iniciar o Vite. A interface agora é executada pelo Vite; Live Server e os antigos scripts da raiz foram substituídos.
+Abra **http://127.0.0.1:5173**. O Vite encaminha `/api` para a API na porta 8080. Se você mudar a porta da API, defina `API_PROXY_TARGET` no terminal antes de iniciar o Vite.
 
-No PowerShell, a partir da raiz do projeto, também é possível iniciar com `.\frontend\run.ps1`. O script usa o Node instalado ou, neste workspace, a instalação portátil local, e instala dependências quando necessário.
+Também é possível iniciar a interface pelo script, a partir da raiz:
 
-Os arquivos .env são privados. Nunca coloque senhas em variáveis VITE_*: elas são públicas no build do frontend.
-
-Se seu .env já define CORS_ORIGINS para o Live Server, atualize-o para incluir http://localhost:5173 e http://127.0.0.1:5173. O padrão do backend agora permite essas duas origens.
-
-## Testar pela interface
-
-1. Entre como administrador. Cadastre curso, matéria, sala, professor e coordenador. Vincule os usuários ao curso.
-2. Entre como coordenador e clique em **Adicionar Aula**. Informe matéria, docente, turma, data, início, término e sala. Salve como rascunho.
-3. Teste **Editar → Somente esta aula** ou **Todas as aulas desta série**. Alterar a data da série desloca todas as ocorrências pelo mesmo intervalo, preservando publicação e cancelamentos.
-4. Clique em **Publicar Cronograma**. Entre como professor, consulte suas aulas e altere sala ou situação.
-5. Use **Entrar como aluno**, selecione curso, semestre e semana correspondente à aula; confira as notificações.
-6. Use **Atualizar aulas** para buscar alterações de outra sessão. Não há atualização automática em tempo real.
-
-Por padrão, o semestre é de **03/08/2026 a 18/12/2026**. São aceitos dias úteis, no matutino (**08:00–11:50**) ou noturno (**19:00–22:50**), com término posterior ao início. Configure outras datas por SEMESTER_START e SEMESTER_END.
-
-## Organização
-
-```text
-frontend/   React, TypeScript, componentes, testes e build
-backend/    Spring Boot, módulos de negócio, JPA e migrações
-docs/       Arquitetura, fluxogramas e validação
+```powershell
+.\frontend\run.ps1
 ```
+
+O script instala as dependências com `npm ci` caso ainda não exista a pasta `node_modules`.
+
+> Não envie os arquivos `.env` ao GitHub. Não coloque senhas ou outros segredos em variáveis `VITE_*`; esses valores ficam públicos no frontend compilado.
+
+## Primeiro uso e fluxo por perfil
+
+1. Entre como administrador usando `ADMIN_CPF` e `ADMIN_PASSWORD` definidos antes de criar a conta inicial.
+2. Cadastre o curso, matérias, professores e coordenadores. Vincule professores e coordenadores aos cursos. As salas padrão já estarão disponíveis; cadastre outras somente quando necessário.
+3. Saia e entre com a conta do coordenador. Escolha o curso, clique em **Adicionar Aula** e informe matéria, professor, turma, data, horários e sala. A data aparece como `DD/MM/AAAA`; os horários usam 24 horas.
+4. Salve a aula como rascunho. Se necessário, marque a repetição semanal. A lista da sala mostra se ela está disponível ou ocupada na data e faixa de horário informadas.
+5. Para corrigir aulas, escolha **Somente esta aula** ou **Todas as aulas desta série**. Ao finalizar o cronograma, clique em **Publicar Cronograma**.
+6. Entre como professor para consultar as aulas publicadas. A visualização **Semestre inteiro** usa uma lista compacta; **Semana atual** mantém a grade semanal. O professor pode alterar a sala e marcar a aula como confirmada ou cancelada.
+7. Na tela de login, escolha **Entrar como aluno**. O aluno seleciona o curso, o semestre e **Matutino** ou **Noturno**, depois consulta a semana atual ou seleciona um mês. As notificações correspondem à semana selecionada.
+
+Use **Atualizar aulas** no acesso do aluno para buscar mudanças recentes. A aplicação não atualiza o cronograma em tempo real.
+
+O calendário padrão é **03/08/2026 a 18/12/2026**. São aceitos dias úteis, no período matutino (**08:00–11:50**) ou noturno (**19:00–22:50**), com término posterior ao início. Para ajustar o calendário, altere `SEMESTER_START` e `SEMESTER_END` no `.env` e reinicie a API.
+
+## Dados, sessões e importação
+
+- Os cadastros e cronogramas ficam no PostgreSQL. A versão nova não lê nem apaga automaticamente os dados antigos do `localStorage`.
+- As sessões de usuário ficam em memória no navegador. Recarregar a página pede novo login; sair revoga o token. Senhas são armazenadas no backend com BCrypt.
+- O administrador pode importar backups produzidos pelo protótipo. A prévia não grava alterações; a confirmação é aplicada de forma atômica. Senhas antigas não são importadas, e contas novas precisam de uma senha definida durante a importação.
+- Mantenha backups do PostgreSQL e dos arquivos de backup importados em local seguro. O volume Docker não substitui uma cópia de segurança.
+
+## Testes e documentação técnica
+
+Os testes de integração do backend e os testes de navegador criam registros. Execute-os **apenas em um banco PostgreSQL isolado**, com nome terminado em `_test`; eles não devem usar o banco da aplicação.
+
+```powershell
+cd frontend
+npm test
+npm run build
+npm run test:e2e
+```
+
+```powershell
+cd backend
+.\mvnw.cmd test
+.\mvnw.cmd -DskipTests package
+```
+
+Consulte [como configurar e executar os testes](docs/TESTES.md) antes dos testes que acessam a API e o PostgreSQL.
 
 - [Arquitetura](docs/ARQUITETURA.md)
 - [Fluxogramas](docs/FLUXOGRAMAS.md)
-- [Backend e endpoints](backend/README.md)
-- [Testes automatizados](docs/TESTES.md)
+- [API, configuração e endpoints](backend/README.md)
+- [Instruções de testes](docs/TESTES.md)
 
-## Dados e sessão
+## Estrutura
 
-- UUIDs, vínculos e tabelas anteriores são mantidos. Flyway controla o esquema; Hibernate valida sua compatibilidade.
-- A sessão fica em memória. Recarregar a página exige novo login; sair revoga o token. Senhas e tokens não ficam no localStorage.
-- Backups antigos podem ser importados na administração. A prévia não grava dados; a confirmação é atômica. Senhas antigas são descartadas; contas novas exigem novas senhas.
-- Os dados antigos do localStorage não são apagados automaticamente. Eles não são usados pelo novo frontend nem sincronizados com o PostgreSQL.
-- A leitura das notificações do aluno existe somente durante sua sessão anônima.
+```text
+frontend/   Interface React, TypeScript, componentes e testes
+backend/    API Spring Boot, módulos JPA e migrações Flyway
+docs/       Arquitetura, fluxogramas e instruções de validação
+```
 
-## Build
+## Gerar o build
+
+O frontend gera os arquivos estáticos em `frontend/dist`. A API gera o arquivo JAR em `backend/target`:
 
 ```powershell
 cd frontend
@@ -114,6 +158,4 @@ cd ../backend
 .\mvnw.cmd -DskipTests package
 ```
 
-O frontend gera frontend/dist; a API gera o JAR em backend/target. Em produção, sirva o frontend por HTTPS, encaminhe /api ao backend e configure o servidor estático para retornar index.html nas rotas da aplicação. O proxy do Vite é apenas de desenvolvimento.
-
-Esta migração não inclui implantação, recuperação de senha ou limitação de tentativas de login. Configure infraestrutura, backup do PostgreSQL, HTTPS e proteção operacional antes da exposição pública.
+Para publicar em produção, hospede o frontend com HTTPS, encaminhe as requisições `/api` ao backend e configure o servidor estático para servir `index.html` nas rotas React. O proxy do Vite serve apenas ao desenvolvimento. Recuperação de senha, limitação de tentativas e implantação em produção não estão incluídas nesta versão.
