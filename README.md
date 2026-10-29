@@ -1,64 +1,62 @@
 # Sistema Acadêmico — Universidade Anhanguera
 
-Aplicação web para administrar cursos, matérias, professores, salas e cronogramas semestrais. O projeto é o Projeto Integrado II/III da Universidade Anhanguera.
+Sistema web para administrar a estrutura acadêmica e consultar cronogramas de aulas. O projeto separa a interface, a API e o banco de dados: o navegador acessa uma aplicação React, que consome uma API REST em Spring Boot; a API valida as permissões e persiste os dados no PostgreSQL.
 
-A versão principal usa **React, TypeScript, Vite e Tailwind CSS** na interface, **Java 17, Spring Boot e Spring Data JPA** na API e **PostgreSQL** para armazenar os dados. O **Flyway** aplica as alterações de esquema. A interface se comunica com a API; os cadastros e as aulas não dependem do armazenamento local do navegador.
+## Visão geral
 
-## Versões do projeto
-
-O repositório mantém as versões em branches distintas:
-
-| Branch | Conteúdo | Finalidade |
-| --- | --- | --- |
-| [`main`](https://github.com/frodsantana/projeto-integrado-II-III/tree/main) | React + TypeScript, Spring Boot/JPA e PostgreSQL | Projeto principal e desenvolvimento ativo. |
-| [`prototipo`](https://github.com/frodsantana/projeto-integrado-II-III/tree/prototipo) | HTML, JavaScript, Tailwind via CDN e `localStorage` | Versão histórica para consulta. |
-
-Este README explica como executar e usar a `main`. Para abrir o protótipo em uma cópia de trabalho separada, execute na raiz do repositório:
-
-```powershell
-git fetch origin
-git worktree add --detach ../projeto-integrado-prototipo origin/prototipo
+```mermaid
+flowchart LR
+    Pessoa[Administrador, coordenador, professor ou aluno] --> Front[Frontend React e TypeScript]
+    Front -->|HTTPS e JSON| API[API REST Spring Boot]
+    API -->|Spring Data JPA| Banco[(PostgreSQL)]
+    API --> Flyway[Flyway: migrações do banco]
+    Flyway --> Banco
 ```
 
-Abra `../projeto-integrado-prototipo/index.html` com um servidor estático, como a extensão Live Server do VS Code. Para remover essa cópia depois de fechar o servidor:
+O administrador mantém cursos, matérias, coordenadores, professores e salas. O coordenador prepara, edita e publica aulas nos cursos sob sua responsabilidade. O professor consulta suas aulas e pode atualizar a sala ou a situação delas. O aluno consulta sem conta, escolhendo curso, semestre e período.
 
-```powershell
-git worktree remove ../projeto-integrado-prototipo
-```
+A autorização é aplicada pela API. O frontend não guarda as senhas e mantém o token de acesso em memória. Os dados acadêmicos ficam no PostgreSQL, não no armazenamento local do navegador.
 
-As branches não transportam dados do navegador ou do PostgreSQL entre versões.
+## Funcionalidades
 
-## O que o sistema permite fazer
+- **Administração:** cadastro e edição de cursos, matérias, coordenadores, professores e salas; consulta de vínculos; importação de arquivos JSON com prévia.
+- **Cronograma:** cadastro de aulas únicas ou semanais, validação de conflitos, edição individual ou da série e publicação para as turmas.
+- **Professor:** consulta por curso, semestre e período; visualização semanal ou compacta do semestre; atualização da sala e do estado da aula.
+- **Aluno:** consulta anônima por curso, semestre e período; visualização da semana atual ou de um mês; notificações semanais.
+- **Salas:** o banco cria salas padrão na primeira aplicação das migrações: 101–119, 201–219, 301–319, 401–419 e Lab1–Lab6.
 
-- **Administrador:** cadastrar e editar cursos, matérias, coordenadores, professores e salas; consultar vínculos por curso e coordenador; importar um backup antigo com prévia.
-- **Coordenador:** organizar aulas, repetir semanalmente, editar uma aula ou sua série, publicar o cronograma e filtrar aulas. O sistema sinaliza a disponibilidade de salas para a data e o horário informados.
-- **Professor:** consultar aulas publicadas de seus cursos e alterar a sala ou a situação da aula.
-- **Aluno:** acessar sem CPF e senha, escolher curso, semestre e período, consultar a semana atual ou outro mês e ver notificações da semana.
+## Tecnologias
 
-Ao cadastrar um curso, o sistema cria turmas iniciais para seus semestres. Professores e coordenadores podem ser vinculados a mais de um curso. Conflitos de horário, publicação e alterações são tratados pela API.
+| Camada | Tecnologias |
+| --- | --- |
+| Interface | React, TypeScript, Vite e Tailwind CSS |
+| API | Java 17, Spring Boot, Spring Security e Spring Data JPA |
+| Banco | PostgreSQL e Flyway |
+| Testes | Vitest, React Testing Library, Playwright e testes de integração da API |
 
-## Requisitos
+O Node.js e o npm são usados para instalar dependências, executar as ferramentas do frontend, gerar o build e rodar os testes. Em produção, o navegador recebe os arquivos estáticos compilados; a API continua rodando em Java.
 
+## Executar localmente
+
+### Requisitos
+
+- Git.
 - Java 17.
-- Node.js 22.22 ou superior compatível e npm.
-- PostgreSQL 18 ou Docker Desktop para executar o PostgreSQL pelo Compose.
-- PowerShell para os scripts `run.ps1` descritos abaixo. Os comandos do Maven Wrapper também estão disponíveis diretamente.
+- Node.js 22.22 ou compatível e npm.
+- Docker Desktop com Docker Compose, ou um PostgreSQL disponível.
+- PowerShell para usar os scripts `.ps1` apresentados abaixo.
 
-## Iniciar pela primeira vez
+### 1. Preparar e iniciar o PostgreSQL e a API
 
-Os exemplos a seguir usam PowerShell. Abra dois terminais na pasta raiz do projeto.
-
-### 1. Configurar o banco e iniciar a API
-
-Na primeira execução, crie seu arquivo de configuração a partir do exemplo:
+Clone o repositório e entre na pasta do projeto. Na primeira execução, crie a configuração local:
 
 ```powershell
 Copy-Item backend/.env.example backend/.env
 ```
 
-Edite `backend/.env` e substitua `DB_PASSWORD` e `ADMIN_PASSWORD` por valores privados. A senha do administrador deve ter pelo menos 12 caracteres. O CPF inicial é `99999999999`; você pode alterá-lo por `ADMIN_CPF` antes da primeira inicialização.
+Edite `backend/.env` e substitua `DB_PASSWORD` e `ADMIN_PASSWORD` por valores privados. A senha inicial do administrador deve ter pelo menos 12 caracteres. O CPF inicial é `99999999999`; se desejar outro, defina `ADMIN_CPF` antes da criação da primeira conta.
 
-Na mesma sessão do PowerShell, inicie o PostgreSQL pelo Docker Compose e o backend:
+Abra um terminal na pasta `backend` e inicie o banco e a API:
 
 ```powershell
 cd backend
@@ -66,15 +64,13 @@ docker compose up -d
 .\run.ps1
 ```
 
-O Compose publica o PostgreSQL somente no computador local, na porta **5433**, e mantém os dados no volume `academico_data`. Não remova esse volume se quiser preservar os dados. A API fica disponível em `http://localhost:8080/api`.
+O Compose disponibiliza o PostgreSQL em `localhost:5433` e mantém os dados no volume `academico_data`. A API fica em `http://localhost:8080/api`. Na inicialização, o Flyway aplica as migrações pendentes.
 
-Na inicialização, o Flyway aplica as migrações pendentes. Uma delas cria as salas padrão: **101–119**, **201–219**, **301–319**, **401–419** e **Lab1–Lab6**. Salas já cadastradas são mantidas. O administrador inicial só é criado quando ainda não existe uma conta de administrador; alterar a senha no `.env` não redefine uma senha existente.
+Para usar um PostgreSQL instalado fora do Compose, altere `DB_URL`, `DB_USER` e `DB_PASSWORD` em `backend/.env`. O padrão do Compose é `jdbc:postgresql://localhost:5433/academico`.
 
-Se você já possui `backend/.env`, mantenha-o e confira apenas se `DB_URL` aponta para o banco correto. Não copie o exemplo sobre sua configuração atual. Para um PostgreSQL instalado diretamente, ajuste `DB_URL`, `DB_USER` e `DB_PASSWORD` conforme sua instalação; não é necessário iniciar o Compose.
+### 2. Iniciar o frontend
 
-### 2. Iniciar a interface
-
-No segundo terminal, a partir da raiz do repositório:
+Abra outro terminal na raiz do projeto:
 
 ```powershell
 cd frontend
@@ -82,42 +78,100 @@ npm ci
 npm run dev
 ```
 
-Abra **http://127.0.0.1:5173**. O Vite encaminha `/api` para a API na porta 8080. Se você mudar a porta da API, defina `API_PROXY_TARGET` no terminal antes de iniciar o Vite.
+Acesse **http://127.0.0.1:5173**. Durante o desenvolvimento, o Vite encaminha as requisições `/api` para a API local na porta 8080. Se a API usar outra porta, defina `API_PROXY_TARGET` antes de iniciar o Vite.
 
-Também é possível iniciar a interface pelo script, a partir da raiz:
+### 3. Primeiro acesso
 
-```powershell
-.\frontend\run.ps1
+Use o CPF e a senha definidos em `ADMIN_CPF` e `ADMIN_PASSWORD` para entrar como administrador. A senha do ambiente só cria a conta inicial quando ainda não existe um administrador; alterá-la depois não redefine a senha já gravada.
+
+Cadastre os cursos e matérias, vincule professores e coordenadores e então crie aulas pela conta do coordenador. Alunos acessam pelo botão **Entrar como aluno**, sem CPF ou senha.
+
+### Acessar o banco com pgAdmin
+
+Para uma instalação local via Compose, registre um servidor no pgAdmin com estes dados:
+
+| Campo | Valor |
+| --- | --- |
+| Host | `localhost` |
+| Porta | `5433` |
+| Banco | `academico` |
+| Usuário | `academico` |
+| Senha | valor de `DB_PASSWORD` em `backend/.env` |
+
+Mantenha o volume `academico_data` para preservar os dados. Evite remover o volume ao desligar o Compose.
+
+## Deploy
+
+A implantação atual usa **Supabase para PostgreSQL**, **Render para a API** e **Cloudflare Pages para o frontend**. A publicação do frontend e da API não inclui migração de dados existentes: os dados ficam no banco Supabase configurado para o serviço.
+
+### 1. Banco PostgreSQL no Supabase
+
+Crie ou selecione um projeto no Supabase. No painel **Connect**, copie as credenciais do **Session pooler** e use os valores fornecidos pelo painel para configurar o serviço Render. O Supabase recomenda o pooler de sessão como alternativa quando o ambiente não consegue usar a conexão direta; escolha host, porta e usuário apresentados no painel, sem tentar montá-los manualmente.
+
+Configure no Render:
+
+```text
+DB_URL=jdbc:postgresql://<HOST_DO_POOLER>:<PORTA>/<BANCO>?sslmode=require
+DB_USER=<USUARIO_DO_POOLER>
+DB_PASSWORD=<SENHA_DO_BANCO>
 ```
 
-O script instala as dependências com `npm ci` caso ainda não exista a pasta `node_modules`.
+Mantenha `DB_PASSWORD` como variável secreta. A senha não deve ser incluída na URL se estiver configurando `DB_USER` e `DB_PASSWORD` separadamente. Faça backup do banco de forma independente do GitHub e dos deploys.
 
-> Não envie os arquivos `.env` ao GitHub. Não coloque senhas ou outros segredos em variáveis `VITE_*`; esses valores ficam públicos no frontend compilado.
+### 2. API no Render
 
-## Primeiro uso e fluxo por perfil
+Crie um **Web Service** conectado ao repositório e à branch `main`, usando Docker. Como o Dockerfile copia arquivos a partir da raiz do monorepo, mantenha a raiz do serviço como a raiz do repositório e informe o caminho `backend/Dockerfile` como Dockerfile.
 
-1. Entre como administrador usando `ADMIN_CPF` e `ADMIN_PASSWORD` definidos antes de criar a conta inicial.
-2. Cadastre o curso, matérias, professores e coordenadores. Vincule professores e coordenadores aos cursos. As salas padrão já estarão disponíveis; cadastre outras somente quando necessário.
-3. Saia e entre com a conta do coordenador. Escolha o curso, clique em **Adicionar Aula** e informe matéria, professor, turma, data, horários e sala. A data aparece como `DD/MM/AAAA`; os horários usam 24 horas.
-4. Salve a aula como rascunho. Se necessário, marque a repetição semanal. A lista da sala mostra se ela está disponível ou ocupada na data e faixa de horário informadas.
-5. Para corrigir aulas, escolha **Somente esta aula** ou **Todas as aulas desta série**. Ao finalizar o cronograma, clique em **Publicar Cronograma**.
-6. Entre como professor para consultar as aulas publicadas. A visualização **Semestre inteiro** usa uma lista compacta; **Semana atual** mantém a grade semanal. O professor pode alterar a sala e marcar a aula como confirmada ou cancelada.
-7. Na tela de login, escolha **Entrar como aluno**. O aluno seleciona o curso, o semestre e **Matutino** ou **Noturno**, depois consulta a semana atual ou seleciona um mês. As notificações correspondem à semana selecionada.
+Configure as variáveis de ambiente do serviço:
 
-Use **Atualizar aulas** no acesso do aluno para buscar mudanças recentes. A aplicação não atualiza o cronograma em tempo real.
+| Variável | Valor |
+| --- | --- |
+| `DB_URL` | URL JDBC do PostgreSQL Supabase conforme acima |
+| `DB_USER` | Usuário fornecido pelo Session pooler |
+| `DB_PASSWORD` | Senha do banco, armazenada como segredo |
+| `ADMIN_CPF` | CPF inicial do administrador, somente para a primeira criação |
+| `ADMIN_PASSWORD` | Senha inicial forte, com pelo menos 12 caracteres |
+| `CORS_ORIGINS` | `https://projeto-integrado-ii-iii.pages.dev` |
+| `SEMESTER_START` | Data inicial ISO, por exemplo `2026-08-03` |
+| `SEMESTER_END` | Data final ISO, por exemplo `2026-12-18` |
 
-O calendário padrão é **03/08/2026 a 18/12/2026**. São aceitos dias úteis, no período matutino (**08:00–11:50**) ou noturno (**19:00–22:50**), com término posterior ao início. Para ajustar o calendário, altere `SEMESTER_START` e `SEMESTER_END` no `.env` e reinicie a API.
+O Render fornece a porta HTTP em `PORT`; não fixe uma porta diferente nas configurações do serviço. No primeiro deploy, o Flyway cria ou atualiza o esquema do banco.
 
-## Dados, sessões e importação
+### 3. Frontend no Cloudflare Pages
 
-- Os cadastros e cronogramas ficam no PostgreSQL. A versão nova não lê nem apaga automaticamente os dados antigos do `localStorage`.
-- As sessões de usuário ficam em memória no navegador. Recarregar a página pede novo login; sair revoga o token. Senhas são armazenadas no backend com BCrypt.
-- O administrador pode importar backups produzidos pelo protótipo. A prévia não grava alterações; a confirmação é aplicada de forma atômica. Senhas antigas não são importadas, e contas novas precisam de uma senha definida durante a importação.
-- Mantenha backups do PostgreSQL e dos arquivos de backup importados em local seguro. O volume Docker não substitui uma cópia de segurança.
+Crie um projeto Pages conectado ao mesmo repositório, com estas configurações:
 
-## Testes e documentação técnica
+| Configuração | Valor |
+| --- | --- |
+| Branch de produção | `main` |
+| Diretório raiz | `frontend` |
+| Preset | React (Vite) |
+| Comando de build | `npm run build` |
+| Diretório de saída | `dist` |
+| Variável de build `VITE_API_URL` | `https://projeto-integrado-ii-iii.onrender.com/api` |
 
-Os testes de integração do backend e os testes de navegador criam registros. Execute-os **apenas em um banco PostgreSQL isolado**, com nome terminado em `_test`; eles não devem usar o banco da aplicação.
+`VITE_API_URL` é incorporada nos arquivos públicos do frontend; ela deve conter somente o endereço da API, nunca credenciais ou segredos. O código também usa o endereço atual do Render como padrão de produção quando a variável está vazia ou definida como `/api`.
+
+Após salvar as configurações, faça o deploy e confirme que ele terminou com sucesso. Um push para `main` inicia novos builds quando a integração Git do Pages está habilitada. A API aceita apenas as origens listadas em `CORS_ORIGINS`; se mudar o domínio do frontend, atualize essa variável no Render e faça novo deploy.
+
+### Endereços atuais
+
+- Frontend: [projeto-integrado-ii-iii.pages.dev](https://projeto-integrado-ii-iii.pages.dev)
+- API: [projeto-integrado-ii-iii.onrender.com](https://projeto-integrado-ii-iii.onrender.com)
+
+Os nomes dos serviços e os domínios podem mudar. Se forem alterados, atualize `VITE_API_URL` no Cloudflare Pages e `CORS_ORIGINS` no Render.
+
+### Documentação oficial dos provedores
+
+- [Cloudflare Pages: configuração de build](https://developers.cloudflare.com/pages/configuration/build-configuration/)
+- [Render: deploy com Docker](https://render.com/docs/docker) e [variáveis de ambiente](https://render.com/docs/configure-environment-variables)
+- [Supabase: conexão com PostgreSQL](https://supabase.com/docs/guides/database/connecting-to-postgres)
+
+## Testes e build
+
+Os testes de integração da API e os testes de navegador criam registros. Execute-os somente contra um banco PostgreSQL isolado, com nome terminado em `_test`; nunca use o banco de produção.
+
+Frontend:
 
 ```powershell
 cd frontend
@@ -126,36 +180,36 @@ npm run build
 npm run test:e2e
 ```
 
+Backend:
+
 ```powershell
 cd backend
 .\mvnw.cmd test
 .\mvnw.cmd -DskipTests package
 ```
 
-Consulte [como configurar e executar os testes](docs/TESTES.md) antes dos testes que acessam a API e o PostgreSQL.
+Consulte [docs/TESTES.md](docs/TESTES.md) antes de executar testes que usam a API e o PostgreSQL. Para validar apenas a compilação do frontend, `npm run build` gera o site em `frontend/dist`.
+
+## Dados e segurança
+
+- Não envie `backend/.env`, backups, senhas, tokens ou dados pessoais ao repositório.
+- Não use variáveis `VITE_*` para segredos: elas são incluídas no frontend compilado.
+- A conta inicial do administrador é criada somente quando o banco ainda não possui uma conta de administrador.
+- O login retorna um token Bearer com validade definida pelo backend; a sessão atual fica em memória no navegador.
+- Arquivos de backup não são transferidos automaticamente para o PostgreSQL. Quando necessário, use a importação disponível na área administrativa.
+- O volume Docker local e o serviço Supabase são armazenamentos diferentes. Um backup de um ambiente não atualiza o outro.
+
+## Estrutura do repositório
+
+```text
+frontend/   React, TypeScript, telas, componentes e testes
+backend/    API Spring Boot, módulos JPA, migrações Flyway e Dockerfile
+docs/       Arquitetura, fluxogramas e procedimentos de teste
+```
+
+## Documentação adicional
 
 - [Arquitetura](docs/ARQUITETURA.md)
 - [Fluxogramas](docs/FLUXOGRAMAS.md)
-- [API, configuração e endpoints](backend/README.md)
-- [Instruções de testes](docs/TESTES.md)
-
-## Estrutura
-
-```text
-frontend/   Interface React, TypeScript, componentes e testes
-backend/    API Spring Boot, módulos JPA e migrações Flyway
-docs/       Arquitetura, fluxogramas e instruções de validação
-```
-
-## Gerar o build
-
-O frontend gera os arquivos estáticos em `frontend/dist`. A API gera o arquivo JAR em `backend/target`:
-
-```powershell
-cd frontend
-npm run build
-cd ../backend
-.\mvnw.cmd -DskipTests package
-```
-
-Para publicar em produção, hospede o frontend com HTTPS, encaminhe as requisições `/api` ao backend e configure o servidor estático para servir `index.html` nas rotas React. O proxy do Vite serve apenas ao desenvolvimento. Recuperação de senha, limitação de tentativas e implantação em produção não estão incluídas nesta versão.
+- [Testes](docs/TESTES.md)
+- [API, endpoints e configuração](backend/README.md)
