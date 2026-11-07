@@ -199,7 +199,7 @@ cd backend
 .\mvnw.cmd test
 ```
 
-Mais detalhes em docs/TESTES.md.
+Mais detalhes em [Testes](../docs/TESTES.md).
 
 ## Segurança e dados
 
@@ -215,8 +215,8 @@ backend/    API Spring Boot, módulos JPA, migrações Flyway e Dockerfile
 docs/       Arquitetura, fluxogramas e procedimentos de teste
 ```
 
-Documentação adicional: Arquitetura ·
-Fluxogramas · Testes ·
+Documentação adicional: [Arquitetura](../docs/ARQUITETURA.md) ·
+[Fluxogramas](../docs/FLUXOGRAMAS.md) · [Testes](../docs/TESTES.md) ·
 API e endpoints
 
 ## Equipe
