@@ -83,11 +83,21 @@ token de acesso apenas em memória.
 
 ## Screenshots
 
-!Tela de login
+Tela de Login
+<img src="imgs/Tela de Login.png" alt="Tela Login" width="1200">
 
-!Cronograma do aluno
+Painel do Admin
+<img src="imgs/Tela Adm.png" alt="Tela Admin" width="1200">
 
-!Painel do coordenador
+Painel do coordenador
+<img src="imgs/Tela Coordenador.png" alt="Tela Coordenador" width="1200">
+
+Cronograma do Professor
+<img src="imgs/Tela Professor.png" alt="Tela Professor" width="1200">
+
+Cronograma do Aluno
+<img src="imgs/Tela Aluno.png" alt="Tela Aluno" width="1200">
+
 
 ## Executar localmente
 
@@ -97,11 +107,10 @@ token de acesso apenas em memória.
 - Java 17
 - Node.js 22.22 (ou compatível) e npm
 - Docker Desktop com Docker Compose (ou um PostgreSQL próprio)
-- PowerShell (Windows). [PREENCHER: equivalente para Linux/macOS, se existir]
 
 ### 1. Banco de dados e API
 
-```powershell
+```Terminal
 # Clone e entre na pasta do projeto
 git clone <https://github.com/frodsantana/projeto-integrado-II-III.git>
 cd projeto-integrado-II-III
@@ -113,7 +122,7 @@ Copy-Item backend/.env.example backend/.env
 Edite `backend/.env` e troque `DB_PASSWORD` e `ADMIN_PASSWORD` por valores
 privados (a senha do admin precisa ter **12 caracteres ou mais**).
 
-```powershell
+```Terminal
 cd backend
 docker compose up -d   # sobe o PostgreSQL em localhost:5433
 .\run.ps1              # sobe a API em <http://localhost:8080/api>
@@ -125,7 +134,7 @@ O Flyway aplica as migrações automaticamente na inicialização.
 
 Em **outro terminal**:
 
-```bash
+```Terminal
 cd frontend
 npm ci
 npm run dev
@@ -172,8 +181,6 @@ Variáveis de ambiente (apenas os nomes; os valores ficam nos painéis):
 | --- | --- |
 | Render (API) | `DB_URL`, `DB_USER`, `DB_PASSWORD`, `ADMIN_CPF`, `ADMIN_PASSWORD`, `CORS_ORIGINS`, `SEMESTER_START`, `SEMESTER_END` |
 | Cloudflare Pages | `VITE_API_URL` |
-
-Passo a passo completo: docs/DEPLOY.md [CRIAR ou manter aqui]
 
 ## Testes
 
@@ -224,5 +231,3 @@ API e endpoints
 ## Licença
 
 Projeto acadêmico, todos os direitos reservados.
-
-[](https://app.notion.com/p/4114c0680c44809cac1ff029642d859c?pvs=21)
