@@ -11,19 +11,20 @@ o primeiro acesso pode levar cerca de 1 minuto. Aguarde e recarregue a página.
 
 ## Sumário
 
-- Contexto acadêmico
-- Sobre o projeto
-- Perfis e funcionalidades
-- Arquitetura
-- Tecnologias
-- Screenshots
-- Executar localmente
-- Deploy
-- Testes
-- Segurança e dados
-- Estrutura do repositório
-- Equipe
-- Licença
+- [Contexto acadêmico](#contexto-acadêmico)
+- [Sobre o projeto](#sobre-o-projeto)
+- [Perfis e funcionalidades](#perfis-e-funcionalidades)
+- [Arquitetura](#arquitetura)
+- [Tecnologias](#tecnologias)
+- [Screenshots](#screenshots)
+- [Executar localmente](#executar-localmente)
+- [Deploy](#deploy)
+- [Testes](#testes)
+- [Documentação](#documentação)
+- [Segurança e dados](#segurança-e-dados)
+- [Estrutura do repositório](#estrutura-do-repositório)
+- [Equipe](#equipe)
+- [Licença](#licença)
 
 ## Contexto acadêmico
 
@@ -199,7 +200,7 @@ cd backend
 .\mvnw.cmd test
 ```
 
-Mais detalhes em [Testes](../docs/TESTES.md).
+Mais detalhes em [Testes](docs/TESTES.md).
 
 ## Segurança e dados
 
@@ -215,9 +216,12 @@ backend/    API Spring Boot, módulos JPA, migrações Flyway e Dockerfile
 docs/       Arquitetura, fluxogramas e procedimentos de teste
 ```
 
-Documentação adicional: [Arquitetura](../docs/ARQUITETURA.md) ·
-[Fluxogramas](../docs/FLUXOGRAMAS.md) · [Testes](../docs/TESTES.md) ·
-API e endpoints
+## Documentação
+
+- [Arquitetura do sistema](docs/ARQUITETURA.md)
+- [Fluxogramas](docs/FLUXOGRAMAS.md)
+- [Guia de testes](docs/TESTES.md)
+- [API e endpoints](backend/README.md)
 
 ## Equipe
 
