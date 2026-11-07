@@ -5,9 +5,7 @@
 
 **Demo online:** https://projeto-integrado-ii-iii.pages.dev
 
-**Vídeo de demonstração:** [PREENCHER ou remover]
-
-> **Aviso:** a API roda em plano gratuito [CONFIRMAR]. Se ficar um tempo sem uso,
+> **Aviso:** a API roda em plano gratuito. Se ficar um tempo sem uso,
 o primeiro acesso pode levar cerca de 1 minuto. Aguarde e recarregue a página.
 > 
 
